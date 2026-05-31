@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: haier-service-os-api
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        sync: false          # Set manually in Render dashboard
+      - key: GCC_EMAIL
+        value: hgins01105@gcc.haier.net
+      - key: GCC_PASSWORD
+        sync: false          # Set manually in Render dashboard
+      - key: PYTHON_VERSION
+        value: 3.11.0
