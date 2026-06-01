@@ -406,3 +406,19 @@ def get_product_groups(db: Session = Depends(get_db)):
 @app.get("/health")
 def health():
     return {"status": "ok", "time": datetime.utcnow()}
+
+
+@app.get("/api/db-test")
+def db_test():
+    """Test DB connection — shows exact error if failing."""
+    import os
+    db_url = os.getenv("DATABASE_URL", "not set")
+    # Mask password
+    masked = db_url.split("@")[1] if "@" in db_url else db_url
+    try:
+        from database import engine
+        with engine.connect() as conn:
+            result = conn.execute(__import__("sqlalchemy").text("SELECT 1"))
+            return {"db": "connected", "host": masked, "result": str(result.fetchone())}
+    except Exception as e:
+        return {"db": "failed", "host": masked, "error": str(e)}
