@@ -19,7 +19,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 # ── Config ────────────────────────────────────────────────────────────────
-SUPABASE_URL = "postgresql://postgres.dqwbkagcxvjeoilqiruu:Visakha%40123@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres"
+NEON_URL = "postgresql://neondb_owner:npg_xnil7mGXe3uh@ep-cool-flower-aouv20eg.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
 GCC_EMAIL    = "hgins01105@gcc.haier.net"
 GCC_PASSWORD = os.getenv("GCC_PASSWORD", "")   # set in .env or env var
 D365_URL     = "https://haiergccin.crm8.dynamics.com"
@@ -41,7 +41,7 @@ if not GCC_PASSWORD:
 
 
 # ── DB setup ──────────────────────────────────────────────────────────────
-engine = create_engine(SUPABASE_URL, connect_args={"sslmode": "require"}, pool_pre_ping=True)
+engine = create_engine(NEON_URL, pool_pre_ping=True)
 Session = sessionmaker(bind=engine)
 
 # Import models (from same directory)
