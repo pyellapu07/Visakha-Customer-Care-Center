@@ -24,7 +24,11 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 def init_db():
-    Base.metadata.create_all(bind=engine)
+    try:
+        Base.metadata.create_all(bind=engine)
+        print("DB tables ready")
+    except Exception as e:
+        print(f"DB init warning: {e} — will retry on first request")
 
 
 def get_db():
