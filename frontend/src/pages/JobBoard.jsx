@@ -309,8 +309,8 @@ export default function JobBoard() {
   }, [load]);
 
   const doSync = async () => {
-    setSyncing(true);
-    try { await syncGCC(); await load(); } finally { setSyncing(false); }
+    setMsg && setMsg('Run sync_gcc.bat on the office PC to sync from GCC.');
+    await load(); // refresh from DB
   };
 
   const handleAssign = async (jobId, techId) => {

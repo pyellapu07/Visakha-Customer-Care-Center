@@ -115,23 +115,10 @@ export default function Dashboard() {
   }, []);
 
   const doSync = useCallback(async (auto = false) => {
-    if (syncing) return;
-    setSyncing(true);
-    setMsg(null);
-    try {
-      const r = await syncGCC();
-      setMsg(r.status === 'success'
-        ? `Synced ${r.jobs_fetched} jobs · ${r.jobs_new} new${auto ? ' (auto)' : ''}`
-        : `Error: ${r.error}`);
-      lastSyncRef.current = Date.now();
-      setNextIn(GCC_SYNC_MS / 1000);
-      await loadStats();
-    } catch (e) {
-      setMsg(`Failed: ${e.message}`);
-    } finally {
-      setSyncing(false);
-    }
-  }, [syncing, loadStats]);
+    if (auto) { await loadStats(); return; }  // auto just refreshes stats
+    // GCC sync runs locally via sync_gcc.bat on dad's PC
+    setMsg('Run sync_gcc.bat on the office PC to pull latest jobs from GCC. Dashboard refreshes automatically every 5 min.');
+  }, [loadStats]);
 
   useEffect(() => { loadStats(); const t = setInterval(loadStats, DB_REFRESH_MS); return () => clearInterval(t); }, [loadStats]);
 
