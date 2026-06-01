@@ -14,7 +14,15 @@ from schemas import (
     JobOut, TechnicianOut, AssignmentCreate, AssignmentOut,
     PartRequestCreate, PartRequestOut, DashboardStats, SyncResult
 )
-from gcc_sync import run_sync
+
+# gcc_sync uses playwright + pandas — optional on cloud (runs locally only)
+try:
+    from gcc_sync import run_sync
+    GCC_SYNC_AVAILABLE = True
+except ImportError:
+    GCC_SYNC_AVAILABLE = False
+    async def run_sync(db): return {"jobs_fetched": 0, "jobs_new": 0, "jobs_updated": 0,
+        "technicians_fetched": 0, "status": "error", "error": "Sync runs locally only"}
 
 app = FastAPI(title="Haier Service OS", version="1.0.0")
 
@@ -356,9 +364,12 @@ async def import_from_excel(
     file: UploadFile = File(...),
     db: Session = Depends(get_db)
 ):
-    """Manual import: upload GCC Excel export file."""
-    from gcc_sync import parse_excel_export
-    from gcc_mapper import map_job
+    """Manual import: upload GCC Excel export file (local only)."""
+    try:
+        from gcc_sync import parse_excel_export
+        from gcc_mapper import map_job
+    except ImportError:
+        raise HTTPException(503, "Excel import requires pandas — run locally")
 
     content = await file.read()
     tmp = Path(f"uploads/import_{file.filename}")

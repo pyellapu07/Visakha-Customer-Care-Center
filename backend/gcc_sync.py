@@ -12,7 +12,12 @@ import os
 import json
 import asyncio
 import httpx
-import pandas as pd
+
+try:
+    import pandas as pd
+    PANDAS_AVAILABLE = True
+except ImportError:
+    PANDAS_AVAILABLE = False
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
