@@ -11,9 +11,11 @@ if DATABASE_URL.startswith("postgres://"):
 
 IS_SQLITE = DATABASE_URL.startswith("sqlite")
 
+connect_args = {"check_same_thread": False} if IS_SQLITE else {"sslmode": "require"}
+
 engine = create_engine(
     DATABASE_URL,
-    connect_args={"check_same_thread": False} if IS_SQLITE else {},
+    connect_args=connect_args,
     pool_pre_ping=True,
     pool_recycle=300 if not IS_SQLITE else -1,
 )
